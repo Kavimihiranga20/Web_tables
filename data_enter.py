@@ -51,9 +51,21 @@ def form_fill():
     salary_wrapper.find_element(By.TAG_NAME, "input").send_keys(salary)
     department_wrapper = form.find_element(By.ID, "department-wrapper")
     department_wrapper.find_element(By.TAG_NAME, "input").send_keys(department)
-
+    time.sleep(2)
     driver.find_element(By.ID, "submit").click()
 
 
-select_need_rows()
-form_fill()
+def data_enter():
+    select_need_rows()
+    i = 0
+    while i < 10:
+        _next = driver.find_element(By.CLASS_NAME, "-next")
+        next_btn = _next.find_element(By.TAG_NAME, "button")
+        if next_btn.is_enabled():
+            time.sleep(2)
+            next_btn.click()
+        form_fill()
+        i += 1
+
+
+data_enter()
