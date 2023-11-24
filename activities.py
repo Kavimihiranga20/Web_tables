@@ -55,17 +55,65 @@ def form_fill():
     driver.find_element(By.ID, "submit").click()
 
 
+def click_next_btn():
+    _next = driver.find_element(By.CLASS_NAME, "-next")
+    next_btn = _next.find_element(By.TAG_NAME, "button")
+    if next_btn.is_enabled():
+        time.sleep(2)
+        next_btn.click()
+
+
 def data_enter():
     select_need_rows()
     i = 0
     while i < 10:
-        _next = driver.find_element(By.CLASS_NAME, "-next")
-        next_btn = _next.find_element(By.TAG_NAME, "button")
-        if next_btn.is_enabled():
-            time.sleep(2)
-            next_btn.click()
+        click_next_btn()
         form_fill()
         i += 1
 
 
+def go_to_first_page():
+    page_no = driver.find_element(By.CLASS_NAME, "-pageJump")
+    page_no_input = page_no.find_element(By.TAG_NAME, "input")
+    page_no_value = page_no_input.get_attribute("value")
+    i = 0
+    while i < int(page_no_value):
+        previous = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "-previous")))
+        time.sleep(3)
+        previous.find_element(By.TAG_NAME, "button").click()
+        i += 1
+    time.sleep(5)
+
+
+def operations_department_salary_change():
+    t_body = driver.find_element(By.CLASS_NAME, "rt-tbody")
+    table_rows = t_body.find_elements(By.CLASS_NAME, "rt-tr-group")
+    print(len(table_rows))
+    for table_row in table_rows:
+        department_cell = table_row.find_elements(By.CLASS_NAME, "rt-td")[5]
+        department = department_cell.text.strip()
+        if department == "Operations":
+            print("found")
+            actions_btn = table_row.find_element(By.CLASS_NAME, "action-buttons")
+            actions_btn.find_elements(By.TAG_NAME, "span")[0].click()
+            time.sleep(3)
+            driver.find_element(By.CLASS_NAME, "close").click()
+            time.sleep(5)
+
+        else:
+            print("not found")
+
+        break
+    i = 1
+    while i < 3:
+        click_next_btn()
+        time.sleep(3)
+        operations_department_salary_change()
+        i += 1
+
+    return
+
+
 data_enter()
+go_to_first_page()
+operations_department_salary_change()
