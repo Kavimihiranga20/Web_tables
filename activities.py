@@ -85,35 +85,42 @@ def go_to_first_page():
     time.sleep(5)
 
 
-def operations_department_salary_change():
+def change_salary():
+    salary_input = driver.find_element(By.ID, "salary")
+    salary_input.clear()
+    salary_input.send_keys("200000")
+    driver.find_element(By.ID, "submit").click()
+    time.sleep(5)
+
+
+def find_operations_departments_change_salary():
     t_body = driver.find_element(By.CLASS_NAME, "rt-tbody")
     table_rows = t_body.find_elements(By.CLASS_NAME, "rt-tr-group")
-    print(len(table_rows))
     for table_row in table_rows:
         department_cell = table_row.find_elements(By.CLASS_NAME, "rt-td")[5]
         department = department_cell.text.strip()
         if department == "Operations":
-            print("found")
+            print("One of operations department found")
             actions_btn = table_row.find_element(By.CLASS_NAME, "action-buttons")
             actions_btn.find_elements(By.TAG_NAME, "span")[0].click()
             time.sleep(3)
-            driver.find_element(By.CLASS_NAME, "close").click()
-            time.sleep(5)
+            change_salary()
 
         else:
             print("not found")
 
-        break
-    i = 1
-    while i < 3:
-        click_next_btn()
-        time.sleep(3)
-        operations_department_salary_change()
-        i += 1
-
     return
+
+
+def each_page_operations_department_update():
+    total_page_count = driver.find_element(By.CLASS_NAME, "-totalPages").text
+    i = 0
+    while i < int(total_page_count):
+        find_operations_departments_change_salary()
+        click_next_btn()
+        i += 1
 
 
 data_enter()
 go_to_first_page()
-operations_department_salary_change()
+each_page_operations_department_update()
